@@ -1,0 +1,70 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 col-md-12">
+            <h2 id="quienes-somos">Quiénes Somos</h2>
+            <p style="text-align: justify;"><br/>Recycle Express es mucho más que una empresa de gestión de residuos. Somos una iniciativa dedicada a abordar la necesidad apremiante de gestionar de manera sostenible los residuos, tanto de empresas como de comunidades y particulares. Nos esforzamos por ser un agente de cambio positivo en la cultura ambiental, brindando un servicio confiable y eficiente que no solo recicla materiales, sino que también impulsa una conciencia ambiental más amplia. Nuestro compromiso nos lleva a movilizarnos por toda la Región Metropolitana, rescatando materiales para su reciclaje y fomentando prácticas responsables en la gestión de residuos.
+            </p>
+        </div>
+        <div class="col-lg-4 col-md-12">
+            <a href="#"><img src="{% static 'img/reciclado.jpg' %}" class="img-fluid" alt="Quienes somos"></a>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-lg-6 col-md-12">
+            <h3 style="text-align: justify;">Misión</h3>
+            <p style="text-align: justify;"><br/>Nuestra misión es proporcionar soluciones de reciclaje innovadoras y efectivas que promuevan la sostenibilidad ambiental y contribuyan a la reducción de residuos, fomentando una cultura de reciclaje en nuestra comunidad.</p>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <h3 style="text-align: justify;">Visión</h3>
+            <p style="text-align: justify;"><br/>Ser líderes en la gestión de residuos y reciclaje, reconocidos por nuestra excelencia en el servicio y nuestro compromiso con el medio ambiente, logrando un impacto positivo y duradero en nuestro planeta.</p>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Conoce a Nuestro Equipo</h3> <br>
+        </div>
+        <div class="col-lg-4 col-md-6 text-center">
+            <img src="{% static 'img/fequipo1.jpg' %}" class="img-fluid rounded-circle mb-2" alt="Miembro del equipo 1">
+            <h5>Rodrigo Baeza</h5>
+            <p>Fundador y CEO</p>
+        </div>
+        <div class="col-lg-4 col-md-6 text-center">
+            <img src="{% static 'img/fequipo2.jpg' %}" class="img-fluid rounded-circle mb-2" alt="Miembro del equipo 2">
+            <h5>Inés López</h5>
+            <p>Gerente de Operaciones</p>
+        </div>
+        <div class="col-lg-4 col-md-6 text-center">
+            <img src="{% static 'img/fequipo3.jpeg' %}" class="img-fluid rounded-circle mb-2" alt="Miembro del equipo 3">
+            <h5>Claudia Gómez</h5>
+            <p>Directora de Marketing</p>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Testimonios</h3>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <blockquote class="blockquote">
+                <p class="mb-0">"Recycle Express ha transformado la manera en que gestionamos nuestros residuos. Su servicio es excepcional y su compromiso con el medio ambiente es inspirador."</p> <br>
+                <footer class="blockquote-footer"> Ana Sánchez, <cite title="Source Title">Cliente Satisfecho</cite></footer>
+            </blockquote>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <blockquote class="blockquote">
+                <p class="mb-0">"Gracias a Recycle Express, nuestra empresa ha reducido significativamente su impacto ambiental. Recomiendo encarecidamente sus servicios."</p> <br>
+                <footer class="blockquote-footer">Miguel Rodríguez, <cite title="Source Title">Gerente de Logística</cite></footer>
+            </blockquote>
+        </div>
+    </div>
+</div>
+
+{% block script %}
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block body %}
+
+<div id="custom-carousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#custom-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#custom-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#custom-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>    
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="overlay-image" style="background-image: url('{% static "img/arboles.jpg" %}');">           
+            </div>
+            <div class="containerInicio">
+                <h1>Ayudanos a salvar al planeta!</h1>
+                <p>En nuestro compromiso incansable por hacer de este mundo un lugar mejor, nos dedicamos completamente a nuestra misión.
+                   Nos apasiona la idea de contribuir positivamente a nuestro planeta, y creemos firmemente que cada pequeña acción cuenta.
+                   Es por eso que nos hemos propuesto llevar nuestro mensaje y nuestra labor a diversos rincones del mundo</p>
+                   <button type="button" class="btn btn-primary btn-iniciar" id="mas-informacion-inicio">
+                    Más información
+                  </button>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="overlay-image" style="background-image: url('{% static "img/mundo.jpg" %}');">            
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="overlay-image" style="background-image: url('{% static "img/nuclear.jpg" %}');">            
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#custom-carousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#custom-carousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Ayudanos!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Sabemos que la salud de nuestro planeta depende en gran medida de la naturaleza que lo sustenta. 
+                Es por eso que nos hemos embarcado en una campaña global para plantar árboles. Creemos en el poder 
+                transformador de un árbol: no solo purifican el aire que respiramos, sino que también proporcionan 
+                hábitats vitales para la vida silvestre y contribuyen a estabilizar el clima.
+                <br><br>
+                Nos gustaría invitarte a unirte a nosotros en este emocionante viaje. Tu apoyo y participación son 
+                fundamentales para nuestro éxito. Juntos, podemos marcar la diferencia y dejar un legado duradero de 
+                cuidado y respeto por nuestro preciado planeta. ¡Ayúdanos a plantar un árbol y juntos crearemos un 
+                mundo más verde y próspero para las generaciones venideras!
+                <br><br>
+                <a href="#" class="btn btn-primary">Puedes hace tu donación aquí</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #flexmap {
+        display: flex;
+    }
+    #map { height: 400px;
+        width: 50%; }
+    #texto-mapa {
+        width: 50%;
+        padding: 20px;
+        text-align: center;
+    }
+    h5,h3 {
+        font-weight: bold;
+    }
+
+</style>
+<div id="flexmap">
+    <div id="texto-mapa">
+        <br> <h3>¡Descubre Nuestras Áreas de Servicio en Santiago!</h3> <br>
+        
+        Nos complace anunciar que nuestro servicio de retiro de residuos reciclables a domicilio está disponible en las siguientes comunas de Santiago. Consulta el mapa para ver si tu comuna está incluida y únete a nosotros en la misión de reciclar y cuidar el medio ambiente.
+        <br><br>
+        <h5>¿Tu comuna está en el mapa?</h5>
+        <br>
+        Si tu comuna aparece en el mapa, ya puedes disfrutar de nuestro servicio. Si aún no estamos en tu área, ¡pronto llegaremos! Estamos constantemente ampliando nuestra cobertura para llegar a más hogares.
+    </div>
+    <div id="map"></div>
+</div>
+
+
+{% block script %}
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([-33.455562423748134, -70.69728440300989], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    function onEachFeature(feature, layer) {
+        if (feature.properties && feature.properties.COMUNA) {
+            layer.bindPopup(feature.properties.COMUNA);
+            layer.on('mouseover', function(e) {
+                this.openPopup();
+            });
+            layer.on('mouseout', function(e) {
+                this.closePopup();
+            });
+        }
+    }
+
+    // Fetch GeoJSON data and add it to the map
+    fetch("{% static 'geojson/mapa.geojson' %}")
+        .then(response => {
+            console.log('Response:', response);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('GeoJSON Data:', data);
+            L.geoJSON(data, {
+                color: 'green',
+                fillColor: 'green',
+                fillOpacity: 0.16,
+                onEachFeature: onEachFeature
+            }).addTo(map);
+        })
+        .catch(error => console.error('Error loading GeoJSON data:', error));
+
+</script>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Ayudanos!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Sabemos que la salud de nuestro planeta depende en gran medida de la naturaleza que lo sustenta. 
+                Es por eso que nos hemos embarcado en una campaña global para plantar árboles. Creemos en el poder 
+                transformador de un árbol: no solo purifican el aire que respiramos, sino que también proporcionan 
+                hábitats vitales para la vida silvestre y contribuyen a estabilizar el clima.
+                <br><br>
+                Nos gustaría invitarte a unirte a nosotros en este emocionante viaje. Tu apoyo y participación son 
+                fundamentales para nuestro éxito. Juntos, podemos marcar la diferencia y dejar un legado duradero de 
+                cuidado y respeto por nuestro preciado planeta. ¡Ayúdanos a plantar un árbol y juntos crearemos un 
+                mundo más verde y próspero para las generaciones venideras!
+                <br><br>
+                <a href="#" class="btn btn-primary">Puedes hace tu donación aquí</a>
+            </div>
+        </div>
+    </div>
+</div> 
+<script src="{% static 'js/mapa.js' %}"></script>
+
+{% endblock %}
+
+{% endblock %}
