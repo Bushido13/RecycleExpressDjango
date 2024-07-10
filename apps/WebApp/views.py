@@ -11,6 +11,10 @@ from datetime import datetime
 from django.http import JsonResponse
 from django.contrib.messages import get_messages
 from decimal import Decimal, InvalidOperation
+from cryptography.fernet import Fernet
+from django.conf import settings
+
+f = Fernet(settings.CLAVE_FERNET)
 
 
 @login_required
@@ -18,7 +22,23 @@ def cargarPago(request):
     form = TarjetaPagoForm()
     carrito_items = Carrito.objects.filter(usuario=request.user)
     tarjetas_guardadas = TarjetaPago.objects.filter(usuario=request.user)
-    return render(request, "pago.html", {'form': form, 'carrito_items': carrito_items, 'tarjetas_guardadas': tarjetas_guardadas})
+    
+    # Desencriptar números de tarjeta para mostrarlos
+    tarjetas_data = []
+    f = Fernet(settings.CLAVE_FERNET)
+    for tarjeta in tarjetas_guardadas:
+        numero_tarjeta_descifrado = f.decrypt(tarjeta.numero_tarjeta.encode()).decode()
+        tarjeta_display = {
+            'id': tarjeta.id,
+            'nombre_tarjeta': tarjeta.nombre_tarjeta,
+            'numero_tarjeta': '************' + numero_tarjeta_descifrado[-4:],  # Enmascarar el número de tarjeta
+            'numero_tarjeta_real': numero_tarjeta_descifrado,
+            'fecha_expiracion': tarjeta.fecha_expiracion,
+            'cvv': tarjeta.cvv
+        }
+        tarjetas_data.append(tarjeta_display)
+    
+    return render(request, "pago.html", {'form': form, 'carrito_items': carrito_items, 'tarjetas_guardadas': tarjetas_data})
 
 def cargarInicio(request):
     return render(request, "inicio.html")
@@ -108,6 +128,7 @@ def procesar_pago(request):
             if form.cleaned_data['guardar_tarjeta']:
                 tarjeta = form.save(commit=False)
                 tarjeta.usuario = request.user
+                tarjeta.numero_tarjeta = f.encrypt(tarjeta.numero_tarjeta.encode()).decode()
                 tarjeta.save()
 
             return JsonResponse({'status': 'success'})
@@ -168,6 +189,7 @@ def perfil_usuario(request):
         if tarjeta_form.is_valid():
             nueva_tarjeta = tarjeta_form.save(commit=False)
             nueva_tarjeta.usuario = usuario
+            nueva_tarjeta.numero_tarjeta = f.encrypt(nueva_tarjeta.numero_tarjeta.encode()).decode()
             nueva_tarjeta.save()
             messages.success(request, 'Tarjeta agregada correctamente.')
         return redirect('perfil_usuario')
@@ -175,6 +197,17 @@ def perfil_usuario(request):
         usuario_form = UserForm(instance=usuario)
         tarjeta_form = TarjetaPagoForm()
 
+    # Desencriptar números de tarjeta para mostrarlos
+    tarjetas_data = []
+    for tarjeta in tarjetas:
+        numero_tarjeta_descifrado = f.decrypt(tarjeta.numero_tarjeta.encode()).decode()
+        tarjeta_display = {
+            'id': tarjeta.id,
+            'nombre_tarjeta': tarjeta.nombre_tarjeta,
+            'numero_tarjeta': '************' + numero_tarjeta_descifrado[-4:],
+            'fecha_expiracion': tarjeta.fecha_expiracion
+        }
+        tarjetas_data.append(tarjeta_display)
    
     storage = get_messages(request)
     for message in storage:
@@ -184,7 +217,7 @@ def perfil_usuario(request):
         'usuario_form': usuario_form,
         'tarjeta_form': tarjeta_form,
         'pedidos': pedidos,
-        'tarjetas': tarjetas
+        'tarjetas': tarjetas_data  # Usar tarjetas_data en lugar de tarjetas
     }
     return render(request, 'perfil.html', context)
 
@@ -212,6 +245,7 @@ def agregar_tarjeta(request):
         if form.is_valid():
             nueva_tarjeta = form.save(commit=False)
             nueva_tarjeta.usuario = request.user
+            nueva_tarjeta.numero_tarjeta = f.encrypt(nueva_tarjeta.numero_tarjeta.encode()).decode()
             nueva_tarjeta.save()
             messages.success(request, 'Tarjeta agregada correctamente.')
         else:

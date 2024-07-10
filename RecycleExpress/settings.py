@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from cryptography.fernet import Fernet
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,6 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-0q1*3c6yw-jl(-kw8m24$l3x39n8#eos1jkofpxo!9-uf9&edg'
+
+# Define the Fernet key
+CLAVE_FERNET = b'ZmDfcTF7_60GrrY167zsiPd67pEvs0aGOv2oasOM1Pg='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

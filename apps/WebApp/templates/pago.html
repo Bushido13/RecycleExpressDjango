@@ -15,7 +15,7 @@
           </tr>
         </thead>
         <tbody id="tabla-pago">
-          
+          <!-- Los detalles de pago se cargarán aquí -->
         </tbody>
       </table>
     </div>
@@ -27,17 +27,17 @@
       <form id="form-pago" method="post">
         {% csrf_token %}
         
-        {% if tarjetas_guardadas.exists %}
+        {% if tarjetas_guardadas %}
         <div class="form-group">
           <label for="tarjetas_guardadas">Seleccionar Tarjeta Guardada</label>
           <select id="tarjetas_guardadas" class="form-control">
             <option value="">Selecciona una tarjeta</option>
             {% for tarjeta in tarjetas_guardadas %}
             <option value="{{ tarjeta.id }}"
-                    data-numero="{{ tarjeta.numero_tarjeta }}"
+                    data-numero="{{ tarjeta.numero_tarjeta_real }}"
                     data-nombre="{{ tarjeta.nombre_tarjeta }}"
                     data-fecha="{{ tarjeta.fecha_expiracion }}"
-                    data-cvv="{{ tarjeta.cvv }}">{{ tarjeta.nombre_tarjeta }}</option>
+                    data-cvv="{{ tarjeta.cvv }}">{{ tarjeta.nombre_tarjeta }} ({{ tarjeta.numero_tarjeta }})</option>
             {% endfor %}
           </select>
         </div>
@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     cargarTablaPago();
 
-    
     document.getElementById('form-pago').addEventListener('submit', function(event) {
         
         const nombreTarjeta = document.getElementById('id_nombre_tarjeta').value;
@@ -98,10 +97,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        
     });
 
-    
     document.getElementById('tarjetas_guardadas').addEventListener('change', function(event) {
         const selectedOption = event.target.options[event.target.selectedIndex];
         if (selectedOption.value) {
@@ -116,6 +113,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+
+
+
 
 
 
